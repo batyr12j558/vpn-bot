@@ -2,10 +2,14 @@ import telebot
 import os
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-ADMIN_ID = int(os.getenv("ADMIN_ID"))
+ADMIN_ID = os.getenv("ADMIN_ID")
+
+if not BOT_TOKEN or not ADMIN_ID:
+    raise ValueError("BOT_TOKEN ýa-da ADMIN_ID Environment Variables goýulmady")
+
+ADMIN_ID = int(ADMIN_ID)
 
 bot = telebot.TeleBot(BOT_TOKEN)
-
 waiting_users = {}
 
 @bot.message_handler(commands=['start'])
@@ -39,11 +43,12 @@ def approve(message):
     if message.from_user.id != ADMIN_ID:
         return
 
-    try:
-        user_id = int(message.text.split()[1])
-    except:
+    parts = message.text.split()
+    if len(parts) < 2:
         bot.send_message(ADMIN_ID, "Ulanyş: /ok USER_ID")
         return
+
+    user_id = int(parts[1])
 
     if user_id in waiting_users:
         chat_id = waiting_users[user_id]
@@ -65,13 +70,13 @@ def reject(message):
     if message.from_user.id != ADMIN_ID:
         return
 
-    try:
-        user_id = int(message.text.split()[1])
-    except:
+    parts = message.text.split()
+    if len(parts) < 2:
         return
 
+    user_id = int(parts[1])
     waiting_users.pop(user_id, None)
     bot.send_message(ADMIN_ID, f"❌ User {user_id} inkär edildi")
 
-bot.polling(none_stop=True)
+print("Bot started...")
 bot.infinity_polling()
