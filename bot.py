@@ -1,15 +1,14 @@
 import telebot
 import os
 
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-ADMIN_ID = os.getenv("ADMIN_ID")
+# 🔐 TOKEN-i şu ýere goý (täze, BotFather-dan alnan)
+BOT_TOKEN = "TOKENI_BU_YERE_GOY"
 
-if not BOT_TOKEN or not ADMIN_ID:
-    raise ValueError("BOT_TOKEN ýa-da ADMIN_ID Environment Variables goýulmady")
-
-ADMIN_ID = int(ADMIN_ID)
+# 👑 Admin ID (öz Telegram ID-ň)
+ADMIN_ID = 123456789
 
 bot = telebot.TeleBot(BOT_TOKEN)
+
 waiting_users = {}
 
 @bot.message_handler(commands=['start'])
@@ -44,7 +43,7 @@ def approve(message):
         return
 
     parts = message.text.split()
-    if len(parts) < 2:
+    if len(parts) != 2:
         bot.send_message(ADMIN_ID, "Ulanyş: /ok USER_ID")
         return
 
@@ -71,12 +70,12 @@ def reject(message):
         return
 
     parts = message.text.split()
-    if len(parts) < 2:
+    if len(parts) != 2:
         return
 
     user_id = int(parts[1])
     waiting_users.pop(user_id, None)
     bot.send_message(ADMIN_ID, f"❌ User {user_id} inkär edildi")
 
-print("Bot started...")
-bot.infinity_polling()
+# ▶️ Diňe ŞU polling bolmaly (biri ýeterlik)
+bot.polling(none_stop=True)
