@@ -74,3 +74,4 @@ def reject(message):
     bot.send_message(ADMIN_ID, f"❌ User {user_id} inkär edildi")
 
 bot.polling(none_stop=True)
+bot.infinity_polling()
